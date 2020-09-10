@@ -1,0 +1,6 @@
+*.blend?
+*.mkv
+*.png
+*.jp*g
+!assets/*/*.png
+!assets/*/*.jpg
