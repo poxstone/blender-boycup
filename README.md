@@ -1,5 +1,11 @@
 # Blender + container AI-Platform GPU
 
+- GCP Througthput:
+  - cpu &gt; 4 = 60min aprox.
+  - p100 x 1   = 27min aprox.
+  - p100 x 4   = 14min aprox.
+
+
 ## Local tests
 > **note:** Previous you need installed nvidia-drivers and nvidia-container-toolkit for your linux distro.
 
@@ -21,19 +27,17 @@ watch -n1 nvidia-smi;
 
 - Build
   ```bash
-  docker build -t poxstone/blender-gpu-10:2.9 .;
+  docker build -t "poxstone/blender-gpu-10:2.9" "./";
   ```
 - Run
   ```bash
-  docker run -it --rm --name "blender" --gpus all poxstone/blender-gpu-10:2.9;
+  docker run -it --rm --name "blender" --gpus all "poxstone/blender-gpu-10:2.9";
   ```
 - Run debug
   ```bash
-  docker run -it --rm --name "blender" --gpus all --entrypoint sh poxstone/blender-gpu-10:2.9;
+  docker run -it --rm --name "blender" --gpus all --entrypoint sh "poxstone/blender-gpu-10:2.9";
   ```
 - Connect
   ```bash
   docker exec -it "blender" sh;
   ```
-
-blender --python "force_gpu.py" -b "boycup.blend" -x 1 -E "CYCLES" -o "//render.mkv" -s 0 -e 240 -a;
