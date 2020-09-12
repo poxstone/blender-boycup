@@ -1,33 +1,34 @@
-FROM nvidia/cuda:10.0-devel-ubuntu18.04
+ARG MASTER_IMAGE="gcr.io/co-oortiz-internal/blender-master:v2.9"
+FROM ${MASTER_IMAGE}
 
-ENV BLENDER_MAJOR="2.90"
-ENV BLENDER_VERSION="2.90.0"
-ENV BLENDER_URL="https://ftp.nluug.nl/pub/graphics/blender/release/Blender${BLENDER_MAJOR}/blender-${BLENDER_VERSION}-linux64.tar.xz"
-ENV MODEL3D_PATH="./media3d"
+# args
+ARG GOOGLE_CLOUD_PROJECT="co-oortiz-internal"
+ARG ACCOUNTSERVICE_EMAIL="blender-ai-render@co-oortiz-internal.iam.gserviceaccount.com"
+ARG GCP_CREDENTIALS_FILE="./service-key.json"
+ARG BUCKET_EXPORT="gs://co-oortiz-internal-3dmodels/"
+
+ENV MODEL3D_PATH="./3dmodel"
 ENV MODEL3D_FULL_PATH="/${MODEL3D_PATH}"
-ENV MODEL3D_FILE="boycup.blend"
-ENV BLENDER_PATH="/usr/local/blender"
+ENV MODEL3D_FILE="model.blend"
 ENV RENDER_EXPORT="${MODEL3D_FULL_PATH}/render/"
+ENV ENTRYPOINT_FILE="./entrypoint.sh"
 
-RUN apt-get update && \
-	apt-get install -y \
-		curl wget nano \
-		bzip2 libfreetype6 libgl1-mesa-dev \
-		libglu1-mesa \
-		libxi6 libxrender1 && \
-	apt-get -y autoremove
+# google 
+ENV GOOGLE_CLOUD_PROJECT="${GOOGLE_CLOUD_PROJECT}"
+ENV ACCOUNTSERVICE_EMAIL="${ACCOUNTSERVICE_EMAIL}"
+ENV GOOGLE_APPLICATION_CREDENTIALS="${MODEL3D_FULL_PATH}/${GCP_CREDENTIALS_FILE}"
+ENV BUCKET_EXPORT="${BUCKET_EXPORT}"
 
-# Install blender
-RUN wget --quiet "${BLENDER_URL}" -O blender.tar.xz && \
-    mkdir "${BLENDER_PATH}" && \
-    tar -xf blender.tar.xz -C ${BLENDER_PATH} --strip-components=1 && \
-	rm blender.tar.xz && \
-	ln -s ${BLENDER_PATH}/blender /usr/bin/blender;
+RUN mkdir -p "${RENDER_EXPORT}"
 
-COPY ${MODEL3D_PATH} MODEL3D_FULL_PATH
-RUN mkdir "${RENDER_EXPORT}"
+# copying needed files
+COPY ${MODEL3D_PATH} ${MODEL3D_FULL_PATH}
+COPY ${GCP_CREDENTIALS_FILE} ${GOOGLE_APPLICATION_CREDENTIALS}
+COPY ${ENTRYPOINT_FILE} ${MODEL3D_FULL_PATH}
 
-VOLUME ${MODEL3D_FULL_PATH}/render
+# GCP authorize service account
+RUN gcloud auth activate-service-account "${ACCOUNTSERVICE_EMAIL}" \
+    --key-file "${GOOGLE_APPLICATION_CREDENTIALS}" -q;
 
 WORKDIR ${MODEL3D_FULL_PATH}
-ENTRYPOINT blender --python "${MODEL3D_FULL_PATH}/force_gpu.py" -b "${MODEL3D_FULL_PATH}/${MODEL3D_FILE}" -x 1 -E "CYCLES" -o "//{MODEL3D_FILE}.mkv" -a;
+ENTRYPOINT sh ${ENTRYPOINT_FILE}

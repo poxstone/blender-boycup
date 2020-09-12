@@ -1,7 +1,6 @@
-*.blend?
-*.mkv
-*.png
-*.jp*g
+3dmodel/*.blend?
+3dmodel/*.mkv
+3dmodel/*.png
+3dmodel/*.jp*g
+3dmodel/*.*~
 *.*~
-!assets/*/*.png
-!assets/*/*.jpg
