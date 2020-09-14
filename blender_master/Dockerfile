@@ -12,6 +12,8 @@ RUN apt-get update && \
 		curl wget nano \
 		bzip2 libfreetype6 libgl1-mesa-dev \
 		libglu1-mesa \
+        uni2ascii \
+        jq \
 		libxi6 libxrender1 && \
 	apt-get -y autoremove
  RUN apt-get install -y python python-pip

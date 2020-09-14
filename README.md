@@ -18,7 +18,7 @@ source varibles.sh;
 ### Render Run commandline with GPU
 - Render frame:
 ```bash
-blender --python "./3dmodel/force_gpu.py" -b "./3dmodel/model.blend" -x 1 -E "CYCLES" -o "./render" -f 1;
+blender --python "./3dmodel/force_gpu.py" -b "./3dmodel/model.blend" -x 1 -E "CYCLES" -o "./render" -f 1 -b "./3dmodel/model.blend" -x 1 -E "CYCLES" -o "./render10" -f 10;
 ```
 - Render animation/video 1-240:
 ```bash
@@ -31,10 +31,12 @@ watch -n1 nvidia-smi;
 
 ## Container local
 
-- Build
+- Build master
   ```bash
-  cd blender_master; gdocker build -t "${CONTAINER_IMAGE_MASTER}" "./"; cd ..;
-
+  cd "blender_master"; docker build -t "${CONTAINER_IMAGE_MASTER}" "./"; cd ..;
+  ```
+- Build from master
+  ```bash
   docker build -t "${CONTAINER_IMAGE_NAME}" \
     --build-arg "GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}" \
     --build-arg "ACCOUNTSERVICE_EMAIL=${ACCOUNTSERVICE_EMAIL}" \
@@ -42,15 +44,19 @@ watch -n1 nvidia-smi;
     --build-arg "BUCKET_EXPORT=${BUCKET_EXPORT}" \
     "./";
   ```
-- Run
+- Run simple
   ```bash
   docker run -it --rm --name "3dmodel" --gpus all "${CONTAINER_IMAGE_NAME}";
   ```
-- Run debug
+- Run multiple render and simulate GCP AI platform parameters
+  ```bash
+  docker run -it --rm --name "3dmodel" --gpus all -e "CLOUD_ML_JOB=${CLOUD_ML_JOB}" "${CONTAINER_IMAGE_NAME}";
+  ```
+- Run with debug
   ```bash
   docker run -it --rm --name "3dmodel" --gpus all --entrypoint "/bin/bash" "${CONTAINER_IMAGE_NAME}";
   ```
-- Connect
+- Connect to docker running
   ```bash
   docker exec -it "3dmodel" sh;
   ```
@@ -59,7 +65,7 @@ watch -n1 nvidia-smi;
 
 - Build master
   ```bash
-  cd blender_master; gcloud builds submit --tag "${CONTAINER_IMAGE_MASTER}" "./"  --project "${GOOGLE_CLOUD_PROJECT}"; cd ..;
+  cd "blender_master"; gcloud builds submit --tag "${CONTAINER_IMAGE_MASTER}" "./"  --project "${GOOGLE_CLOUD_PROJECT}"; cd ..;
   ```
 
 - Build
@@ -72,7 +78,9 @@ watch -n1 nvidia-smi;
   --region "${REGION}" \
   --master-image-uri "${CONTAINER_IMAGE_NAME}" \
   --scale-tier "${SCALE_TIER}" \
-  --async;
+  --stream-logs \
+  -- \
+  "${CONTAINER_IMAGE_NAME}"
   ```
 - Render P100 X 2 (36 min 2 sec)
   ```bash
@@ -82,8 +90,7 @@ watch -n1 nvidia-smi;
   --scale-tier "CUSTOM" \
   --master-accelerator="count=2,type=NVIDIA_TESLA_P100" \
   --master-machine-type="n1-standard-4" \
-  --async;
+  --stream-logs \
+  -- \
+  "${CONTAINER_IMAGE_NAME}"
   ```
-
-
-  CLOUD_ML_JOB='{ "scale_tier": "BASIC_GPU", "args": ["--hola\u003dmundo", "--perro\u003dchango"], "region": "us-east1", "run_on_raw_vm": true, "master_config": { "image_uri": "gcr.io/co-oortiz-internal/model3d-gpu:1.0" }}'

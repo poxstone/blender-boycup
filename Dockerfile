@@ -6,12 +6,14 @@ ARG GOOGLE_CLOUD_PROJECT="co-oortiz-internal"
 ARG ACCOUNTSERVICE_EMAIL="blender-ai-render@co-oortiz-internal.iam.gserviceaccount.com"
 ARG GCP_CREDENTIALS_FILE="./service-key.json"
 ARG BUCKET_EXPORT="gs://co-oortiz-internal-3dmodels/"
+ARG ENTRYPOINT_FILE="./entrypoint.sh"
 
 ENV MODEL3D_PATH="./3dmodel"
 ENV MODEL3D_FULL_PATH="/${MODEL3D_PATH}"
 ENV MODEL3D_FILE="model.blend"
 ENV RENDER_EXPORT="${MODEL3D_FULL_PATH}/render/"
-ENV ENTRYPOINT_FILE="./entrypoint.sh"
+ENV ENTRYPOINT_FILE="${ENTRYPOINT_FILE}"
+#ENV CLOUD_ML_JOB='GCP Info json'
 
 # google 
 ENV GOOGLE_CLOUD_PROJECT="${GOOGLE_CLOUD_PROJECT}"
@@ -31,4 +33,4 @@ RUN gcloud auth activate-service-account "${ACCOUNTSERVICE_EMAIL}" \
     --key-file "${GOOGLE_APPLICATION_CREDENTIALS}" -q;
 
 WORKDIR ${MODEL3D_FULL_PATH}
-ENTRYPOINT sh ${ENTRYPOINT_FILE}
+ENTRYPOINT ./${ENTRYPOINT_FILE}
