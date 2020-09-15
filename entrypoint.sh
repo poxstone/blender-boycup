@@ -10,7 +10,7 @@ if [[ $args == "null" || $args == "" ]];then
     # execute blender
     blender --python "${MODEL3D_FULL_PATH}/force_gpu.py" -b "${MODEL3D_FULL_PATH}/${MODEL3D_FILE}" -x 1 -E "CYCLES" -o "${RENDER_EXPORT}/${MODEL3D_FILE}" -a;
     # copy to bucket
-    gsutil cp -r "${RENDER_EXPORT}/*" "${BUCKET_EXPORT}$(date '+%Y%m%d_%H_%M')/";
+    gsutil -m cp -r "${RENDER_EXPORT}/*" "${BUCKET_EXPORT}$(date '+%Y%m%d_%H_%M')/";
 else
     echo "RUN external render models";
     dir_render_m="./internal_render/";
@@ -23,14 +23,14 @@ else
         
         # download blender from cloud storage
         mkdir -p "${dir_render_m}";
-        gsutil cp -r "${kucket_model}/*" "${dir_render_m}";
+        gsutil -m cp -r "${kucket_model}/*" "${dir_render_m}";
         cd "${dir_render_m}";
         ls -lha;
         # render model
         blender ${blender_params};
         ls -lha;
         cd ..;
-        gsutil cp -r "${dir_render_m}/*" "${BUCKET_EXPORT}$(date '+%Y%m%d_%H_%M')/";
+        gsutil -m cp -r "${dir_render_m}/*" "${BUCKET_EXPORT}$(date '+%Y%m%d_%H_%M')/";
         rm -rf "${dir_render_m}";
     done;
 fi;

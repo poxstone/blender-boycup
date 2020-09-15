@@ -63,6 +63,10 @@ watch -n1 nvidia-smi;
 
 ## GCP
 
+- Copy blender model to Cloud Storage
+  ```bash
+  gsutil -m cp -r "./3dmodel/*" "${BUCKET_MODEL_SAVED}";
+  ```
 - Build master
   ```bash
   cd "blender_master"; gcloud builds submit --tag "${CONTAINER_IMAGE_MASTER}" "./"  --project "${GOOGLE_CLOUD_PROJECT}"; cd ..;
@@ -80,7 +84,7 @@ watch -n1 nvidia-smi;
   --scale-tier "${SCALE_TIER}" \
   --stream-logs \
   -- \
-  "${CONTAINER_IMAGE_NAME}"
+  "${CLOUD_ML_JOB}"
   ```
 - Render P100 X 2 (36 min 2 sec)
   ```bash
@@ -92,5 +96,5 @@ watch -n1 nvidia-smi;
   --master-machine-type="n1-standard-4" \
   --stream-logs \
   -- \
-  "${CONTAINER_IMAGE_NAME}"
+  "${CLOUD_ML_JOB}"
   ```
