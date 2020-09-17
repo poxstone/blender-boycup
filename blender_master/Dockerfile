@@ -1,4 +1,5 @@
-FROM nvidia/cuda:10.0-devel-ubuntu18.04
+FROM nvidia/cuda:10.0-runtime-ubuntu18.04
+#FROM nvidia/cuda:10.0-devel-ubuntu18.04
 
 # env
 ENV BLENDER_MAJOR="2.90"
