@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # CLOUD_ML_JOB is GCP arguments pass from gcloud
-#CLOUD_ML_JOB='{ "scale_tier": "BASIC_GPU", "args": ["{ \"renders\":[ { \"kucket_model\":\"gs://co-oortiz-internal-3dmodels/20200913_06_19\", \"blender_params\":\"--python ./3dmodel/force_gpu.py -b ./3dmodel/model.blend -x 1 -E CYCLES -o ./render -f 1\"}] }"], "region": "us-east1", "run_on_raw_vm": true, "master_config": { "image_uri": "gcr.io/co-oortiz-internal/model3d-gpu:1.0" }}'
+#CLOUD_ML_JOB='{ "scale_tier": "BASIC_GPU", "args": ["{ \"renders\":[ { \"kucket_model\":\"gs://stunning-tract-311613-3dmodels/20200913_06_19\", \"blender_params\":\"--python ./3dmodel/force_gpu.py -b ./3dmodel/model.blend -x 1 -E CYCLES -o ./render -f 1\"}] }"], "region": "us-east1", "run_on_raw_vm": true, "master_config": { "image_uri": "gcr.io/stunning-tract-311613/model3d-gpu:1.0" }}'
 args="$(echo $CLOUD_ML_JOB | jq -r '.args' | ascii2uni -a U -q)";
 
 # run with arguments or not

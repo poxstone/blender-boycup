@@ -1,11 +1,11 @@
-ARG MASTER_IMAGE="gcr.io/co-oortiz-internal/blender-master:v2.9"
+ARG MASTER_IMAGE="gcr.io/stunning-tract-311613/blender-master:v2.9"
 FROM ${MASTER_IMAGE}
 
 # args
-ARG GOOGLE_CLOUD_PROJECT="co-oortiz-internal"
-ARG ACCOUNTSERVICE_EMAIL="blender-ai-render@co-oortiz-internal.iam.gserviceaccount.com"
+ARG GOOGLE_CLOUD_PROJECT="stunning-tract-311613"
+ARG ACCOUNTSERVICE_EMAIL="blender@stunning-tract-311613.iam.gserviceaccount.com"
 ARG GCP_CREDENTIALS_FILE="./service-key.json"
-ARG BUCKET_EXPORT="gs://co-oortiz-internal-3dmodels/"
+ARG BUCKET_EXPORT="gs://stunning-tract-311613-3dmodels/"
 ARG ENTRYPOINT_FILE="./entrypoint.sh"
 
 ENV MODEL3D_PATH="./3dmodel"
