@@ -1,19 +1,19 @@
-ARG MASTER_IMAGE="gcr.io/stunning-tract-311613/blender-master:v2.9"
+ARG MASTER_IMAGE="gcr.io/zinc-anvil-320815/blender-master:v2.9.3"
 FROM ${MASTER_IMAGE}
 
 # args
-ARG GOOGLE_CLOUD_PROJECT="stunning-tract-311613"
-ARG ACCOUNTSERVICE_EMAIL="blender@stunning-tract-311613.iam.gserviceaccount.com"
+ARG GOOGLE_CLOUD_PROJECT="zinc-anvil-320815"
+ARG ACCOUNTSERVICE_EMAIL="blender@zinc-anvil-320815.iam.gserviceaccount.com"
 ARG GCP_CREDENTIALS_FILE="./service-key.json"
-ARG BUCKET_EXPORT="gs://stunning-tract-311613-3dmodels/"
+ARG BUCKET_EXPORT="gs://zinc-anvil-320815-3dmodels/"
 ARG ENTRYPOINT_FILE="./entrypoint.sh"
 
 ENV MODEL3D_PATH="./3dmodel"
 ENV MODEL3D_FULL_PATH="/${MODEL3D_PATH}"
-ENV MODEL3D_FILE="model.blend"
+ENV MODEL3D_FILE="main.blend"
 ENV RENDER_EXPORT="${MODEL3D_FULL_PATH}/render/"
 ENV ENTRYPOINT_FILE="${ENTRYPOINT_FILE}"
-#ENV CLOUD_ML_JOB='GCP Info json'
+ENV CLOUD_ML_JOB=''
 
 # google 
 ENV GOOGLE_CLOUD_PROJECT="${GOOGLE_CLOUD_PROJECT}"

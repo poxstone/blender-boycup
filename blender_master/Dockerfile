@@ -2,9 +2,7 @@ FROM nvidia/cuda:10.0-runtime-ubuntu18.04
 #FROM nvidia/cuda:10.0-devel-ubuntu18.04
 
 # env
-ENV BLENDER_MAJOR="2.90"
-ENV BLENDER_VERSION="2.90.0"
-ENV BLENDER_URL="https://ftp.nluug.nl/pub/graphics/blender/release/Blender${BLENDER_MAJOR}/blender-${BLENDER_VERSION}-linux64.tar.xz"
+ENV BLENDER_URL="https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.1-linux-x64.tar.xz"
 ENV BLENDER_PATH="/usr/local/blender"
 
 # update
@@ -37,7 +35,7 @@ RUN wget -nv \
     ln -s /opt/google-cloud-sdk/bin/gcloud /bin/gcloud;
 
 # Install blender
-RUN wget --quiet "${BLENDER_URL}" -O blender.tar.xz && \
+RUN echo "${BLENDER_URL}"; wget --quiet "${BLENDER_URL}" -O blender.tar.xz && \
     mkdir "${BLENDER_PATH}" && \
     tar -xf blender.tar.xz -C ${BLENDER_PATH} --strip-components=1 && \
 	rm blender.tar.xz && \

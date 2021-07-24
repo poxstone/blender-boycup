@@ -1,5 +1,6 @@
 import bpy
 
+
 scene = bpy.context.scene
 scene.cycles.device = 'GPU'
 
@@ -21,3 +22,10 @@ print("DEBUG: cprefs.devices= " + str(cprefs.devices))
 for device in cprefs.devices:
     device.use = True
     print("DEBUG: device.use= " + str(device.use))
+
+
+for i in bpy.data.objects:
+    print(">->->" + i.name_full)
+
+# Set active camera
+bpy.context.scene.camera = bpy.data.objects["Camera"]

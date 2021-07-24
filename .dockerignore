@@ -1,6 +1,7 @@
-3dmodel/*.blend?
+3dmodel/*.blend1?
 3dmodel/*.mkv
 3dmodel/*.png
 3dmodel/*.jp*g
 3dmodel/*.*~
 *.*~
+*.blend1?

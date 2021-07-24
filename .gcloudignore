@@ -1,7 +1,8 @@
-*.blend?
+*.blend[0-9]
 *.mkv
 *.png
 *.jp*g
 *.*~
 !assets/*/*.png
 !assets/*/*.jpg
+*.sw[mnop]

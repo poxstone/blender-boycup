@@ -6,6 +6,8 @@
   - p100 x 4   = 14min aprox.
 
 
+> ***Note:*** blender_init.py has camera name to activate
+
 ## variables
 
 ```bash
@@ -18,11 +20,12 @@ source varibles.sh;
 ### Render Run commandline with GPU
 - Render frame:
 ```bash
-blender --python "./3dmodel/force_gpu.py" -b "./3dmodel/model.blend" -x 1 -E "CYCLES" -o "./render" -f 1 -b "./3dmodel/model.blend" -x 1 -E "CYCLES" -o "./render10" -f 10;
+blender --python "./3dmodel/blender_init.py" -b "./3dmodel/main.blend" -x 1 -E "CYCLES" -o "./render" -f 1 -b "./3dmodel/main.blend" -x 1 -E "CYCLES" -o "./render10" -f 10;
 ```
 - Render animation/video 1-240:
 ```bash
-blender --python "./3dmodel/force_gpu.py" -b "./3dmodel/model.blend" -x 1 -E "CYCLES" -o "./render" -s 0 -e 3 -a;
+blender --python "./3dmodel/blender_init.py" -b "./3dmodel/main.blend" -x 1 -E "CYCLES" -o "./render" -s 0 -e 3 -a;
+blender.exe --python "3dmodel\blender_init.py" -b "3dmodel\main.blend" -x 1 -E "CYCLES" -o "render" -s 0 -e 3 -a
 ```
 - utils
 ```bash
@@ -42,15 +45,25 @@ watch -n1 nvidia-smi;
     --build-arg "ACCOUNTSERVICE_EMAIL=${ACCOUNTSERVICE_EMAIL}" \
     --build-arg "GCP_CREDENTIALS_FILE=${GCP_CREDENTIALS_FILE}" \
     --build-arg "BUCKET_EXPORT=${BUCKET_EXPORT}" \
-    "./";
+    ".";
   ```
 - Run simple
   ```bash
   docker run -it --rm --name "3dmodel" --gpus all "${CONTAINER_IMAGE_NAME}";
+  
+  # customize files
+  docker run -it --rm --name "3dmodel" -v "$(pwd)/3dmodel:/3dmodel" -e "MODEL3D_FILE=main.blend" -v "$(pwd)/entrypoint.sh:/3dmodel/entrypoint.sh"  "${CONTAINER_IMAGE_NAME}";
+  # enter to container run
+  docker run -it --entrypoint sh "${CONTAINER_IMAGE_NAME}";
   ```
 - Run multiple render and simulate GCP AI platform parameters
   ```bash
   docker run -it --rm --name "3dmodel" --gpus all -e "CLOUD_ML_JOB=${CLOUD_ML_JOB}" "${CONTAINER_IMAGE_NAME}";
+  
+  # customize local arguments
+  LOCAL_JOB='{"args":[{ "renders":[ { "blender_params":"--python ./blender_init.py --background ./main.blend --render-output ./render/image_ --render-format PNG --use-extension 1 --engine CYCLES --threads 8 --frame-start 1 --frame-end 1 --render-anim"}] }]}';
+  docker run -it --rm --name "3dmodel" -v "/home/poxstone/3DObjects/apto/:/3dmodel" -v "$(pwd)/entrypoint.sh:/3dmodel/entrypoint.sh" -e "MODEL3D_FILE=main.blend" -e "LOCAL_JOB=${LOCAL_JOB}" "${CONTAINER_IMAGE_NAME}";
+
   ```
 - Run with debug
   ```bash

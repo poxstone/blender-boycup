@@ -1,4 +1,4 @@
-*.blend?
+*.blend[0-9]
 *.mkv
 *.png
 *.jp*g
@@ -6,3 +6,4 @@
 !assets/*/*.png
 !assets/*/*.jpg
 service-key.json
+*.sw[mnop]
