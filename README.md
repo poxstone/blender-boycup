@@ -7,6 +7,7 @@
 
 
 > ***Note:*** blender_init.py has camera name to activate
+> ***Note:*** main.blend is main file and must be configure to eport to vídeo or default action to render
 
 ## variables
 
