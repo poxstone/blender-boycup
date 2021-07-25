@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# CLOUD_ML_JOB is GCP arguments pass from gcloud
-#CLOUD_ML_JOB='{ "scale_tier": "BASIC_GPU", "args": ["{ \"renders\":[ { \"bucket_model\":\"gs://zinc-anvil-320815-3dmodels/20200913_06_19\", \"blender_params\":\"--python ./3dmodel/blender_init.py -b ./3dmodel/main.blend -x 1 -E CYCLES -o ./render -f 1\"}] }"], "region": "us-east1", "run_on_raw_vm": true, "master_config": { "image_uri": "gcr.io/zinc-anvil-320815/model3d-gpu:1.0" }}'
 args="$(echo $CLOUD_ML_JOB | jq -r '.args' | ascii2uni -a U -q)";
 dir_render_m="./internal_render/";
-echo "---ARGS ${args}";
+echo "---env $(env)";
+echo "---gsutil $(gsutil ls)";
 
 function blenderRenderWithPrams {
     local ARGS="${1}";
@@ -15,11 +14,11 @@ function blenderRenderWithPrams {
     
     # download blender from cloud storage
     if [[ "${is_cloudstorage}" != "" ]];then
-        echo "---6 COPY FROM BUCKET";
+        echo "---6 COPY FROM BUCKET arg_inx= ${arg_inx}";
         local bucket_model=$(echo $arg_inx | jq -r '.bucket_model' | awk '{gsub("/+$","",$0);print($0)}');
         mkdir -p "${dir_render_m}";
         cd "${dir_render_m}";
-        gsutil -m cp -r "${bucket_model}/*" "${dir_render_m}";
+        gsutil -m cp -r "${bucket_model}/*" ".";
     fi;
 
     pwd;
@@ -42,7 +41,7 @@ if [[ $args == "null" || $args == "" ]];then
     if [[ $LOCAL_JOB == "null" || $LOCAL_JOB == "" ]];then
       echo "---2 witouth parameters";      
       # execute blender -a = animation; -t = threads; -s init frame -e = end frame;
-      blender --python "${MODEL3D_FULL_PATH}/blender_init.py" --background "${MODEL3D_FULL_PATH}/${MODEL3D_FILE}" --render-output "${RENDER_EXPORT}/${MODEL3D_FILE}" --use-extension 1 --engine "CYCLES" --cycles-device "CPU" --render-anim;
+      blender --python "${MODEL3D_FULL_PATH}/blender_init.py" --background "${MODEL3D_FULL_PATH}/${MODEL3D_FILE}" --render-output "${RENDER_EXPORT}/${MODEL3D_FILE}" --use-extension 1 --engine "CYCLES" --render-anim;
       # render for specific frames animation and format
       #blender --python "${MODEL3D_FULL_PATH}/blender_init.py" --background "${MODEL3D_FULL_PATH}/${MODEL3D_FILE}" --render-output "${RENDER_EXPORT}/${MODEL3D_FILE}" --render-format "PNG" --use-extension 1 --engine "CYCLES" --threads 8 --frame-start 1 --frame-end 1 --render-anim;
       # copy to bucket
